@@ -179,3 +179,17 @@ class TendaAC15():
             ipmac_bind += host["devname"] + "\r" + \
                 host["macaddr"] + "\r" + host["ipaddr"] + "\n"
         return self._req_post(self._URLS['SetIpMacBind'], data={"bindnum": str(len(ipmac_bind_dict["bindList"])), "list": ipmac_bind})
+
+    def filter_bindlist_by_devname(self, str_in_dev_name: str) -> list:
+        """
+        Return a list of DHCP Reservation configuration filtered by 'devname' value if contains the str_in_dev_name param.
+        Returns:
+            list: [{'ipaddr': '192.168.1.100', 'macaddr': 'aa:bb:cc:dd:ee:ff', 'devname': 'ClientName', 'status': '1'}, ...]}
+        """
+        mac_list = self.get_ipmac_bind()
+
+        def iterator_func(x):
+            if str_in_dev_name.lower() in x["devname"].lower():
+                return True
+            return False
+        return list(filter(iterator_func, mac_list["bindList"]))

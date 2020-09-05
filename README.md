@@ -137,3 +137,14 @@ def set_ipmac_bind(self, ipmac_bind_dict: dict) -> str:
         str: Request response '{"errCode":0}'
     """
 ```
+
+### Filter DHCP Reservation configuration by 'devname' value
+
+```python
+def filter_bindlist_by_devname(self, str_in_dev_name: str) -> list:
+    """
+    Return a list of DHCP Reservation configuration filtered by 'devname' value if contains the str_in_dev_name param.
+    Returns:
+        list: [{'ipaddr': '192.168.1.100', 'macaddr': 'aa:bb:cc:dd:ee:ff', 'devname': 'ClientName', 'status': '1'}, ...]}
+    """
+```
