@@ -27,7 +27,7 @@ RESP = {
                                                                                                                     'hostName': 'ClientName', 'ip': '192.168.1.100', 'mac': 'aa:bb:cc:dd:ee:ff', 'limitUp': '0',
                                                                                                                     'limitDown': '0', 'isControled': '0', 'offline': '0', 'isSet': '0'}],
     "GetIpMacBind": {'lanIp': '192.168.1.1', 'lanMask': '255.255.255.0', 'dhttpIP': '172.27.175.218', 'dhcpClientList': [],
-                     'bindList': [{'ipaddr': '192.168.1.100', 'macaddr': 'aa:bb:cc:dd:ee:ff', 'devname': 'ClientName', 'status': '1'}, {'ipaddr': '192.168.1.100', 'macaddr': 'aa:bb:cc:dd:ee:ff', 'devname': 'ClientName', 'status': '1'}]}
+                     'bindList': [{'ipaddr': '192.168.1.100', 'macaddr': 'aa:bb:cc:dd:ee:ff', 'devname': 'ClientName1', 'status': '1'}, {'ipaddr': '192.168.1.100', 'macaddr': 'aa:bb:cc:dd:ee:ff', 'devname': 'ClientName2', 'status': '1'}]}
 
 }
 
@@ -105,3 +105,12 @@ def test_get_net_control(mock_response, tenda):
 def test_get_ipmac_bind(mock_response, tenda):
     r = tenda.get_ipmac_bind()
     assert r == RESP["GetIpMacBind"]
+
+
+def test_filter_bindlist_by_devname(mock_response, tenda):
+    r = tenda.filter_bindlist_by_devname("clientname1")
+    assert len(r) == 1
+    r = tenda.filter_bindlist_by_devname("clientname")
+    assert len(r) == 2
+    for i in r:
+        assert "clientname" in i["devname"].lower()

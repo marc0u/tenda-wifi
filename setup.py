@@ -1,11 +1,23 @@
 import setuptools
+import os
+import sys
+
+# 'setup.py publish' shortcut.
+if sys.argv[-1] == 'publish':
+    os.system('python setup.py sdist bdist_wheel')
+    os.system('twine upload dist/*')
+    sys.exit()
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+requires = [
+    'reqtry==0.0.2'
+]
+
 setuptools.setup(
     name="tendawifi",
-    version="0.0.2",
+    version="0.1.0",
     author="Marco Urriola",
     author_email="marco.urriola@gmail.com",
     description="Python package that allows to manage tenda router AC15.",
@@ -19,4 +31,5 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.6',
+    install_requires=requires,
 )
