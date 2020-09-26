@@ -13,7 +13,8 @@ URLS = {
     'GetNetControl': URL_BASE+'/goform/GetNetControlList',
     'SetNetControl': URL_BASE+'/goform/SetNetControlList',
     'GetIpMacBind': URL_BASE+'/goform/GetIpMacBind',
-    'SetIpMacBind': URL_BASE+'/goform/SetIpMacBind'
+    'SetIpMacBind': URL_BASE+'/goform/SetIpMacBind',
+    'GetOnlineList': self._URL_BASE+'/goform/getOnlineList'
 }
 
 RESP = {
@@ -27,8 +28,10 @@ RESP = {
                                                                                                                     'hostName': 'ClientName', 'ip': '192.168.1.100', 'mac': 'aa:bb:cc:dd:ee:ff', 'limitUp': '0',
                                                                                                                     'limitDown': '0', 'isControled': '0', 'offline': '0', 'isSet': '0'}],
     "GetIpMacBind": {'lanIp': '192.168.1.1', 'lanMask': '255.255.255.0', 'dhttpIP': '172.27.175.218', 'dhcpClientList': [],
-                     'bindList': [{'ipaddr': '192.168.1.100', 'macaddr': 'aa:bb:cc:dd:ee:ff', 'devname': 'ClientName1', 'status': '1'}, {'ipaddr': '192.168.1.100', 'macaddr': 'aa:bb:cc:dd:ee:ff', 'devname': 'ClientName2', 'status': '1'}]}
-
+                     'bindList': [{'ipaddr': '192.168.1.100', 'macaddr': 'aa:bb:cc:dd:ee:ff', 'devname': 'ClientName1', 'status': '1'}, {'ipaddr': '192.168.1.100', 'macaddr': 'aa:bb:cc:dd:ee:ff', 'devname': 'ClientName2', 'status': '1'}]},
+    "GetOnlineList": [{"deviceId": "aa:bb:cc:dd:ee:ff", "ip": "192.168.1.100", "devName": "ClientName1", "line": "2", "uploadSpeed": "0",
+                       "downloadSpeed": "0", "linkType": "unknown", "black": 0, "isGuestClient": "false"}, {"deviceId": "aa:bb:cc:dd:ee:ff", "ip": "192.168.1.100", "devName": "ClientName2", "line": "2", "uploadSpeed": "0",
+                                                                                                            "downloadSpeed": "0", "linkType": "unknown", "black": 0, "isGuestClient": "false"}]
 }
 
 # custom class to be the mock return value of requests.get()
@@ -49,7 +52,7 @@ class MockPostResponse:
         self.status_code = status_code
 
 
-@pytest.fixture
+@ pytest.fixture
 def mock_response(monkeypatch):
     def mock_reqtry_get(*args, **kwargs):
         if args[0] == "http://test.com":
@@ -62,6 +65,8 @@ def mock_response(monkeypatch):
             return MockGetResponse(RESP["GetNetControl"], 200)
         elif args[0] == URLS["GetIpMacBind"]:
             return MockGetResponse(RESP["GetIpMacBind"], 200)
+        elif args[0] == URLS["GetOnlineList"]:
+            return MockGetResponse(RESP["GetOnlineList"], 200)
         return MockGetResponse(None, 404)
 
     def mock_reqtry_post(*args, **kwargs):
@@ -73,7 +78,7 @@ def mock_response(monkeypatch):
     monkeypatch.setattr(reqtry, "post", mock_reqtry_post)
 
 
-@pytest.fixture
+@ pytest.fixture
 def tenda():
     return tendawifi.TendaAC15("http://localhost", "1234")
 
@@ -114,3 +119,8 @@ def test_filter_bindlist_by_devname(mock_response, tenda):
     assert len(r) == 2
     for i in r:
         assert "clientname" in i["devname"].lower()
+
+
+def test_get_online_list(mock_response, tenda):
+    r = tenda.get_online_list()
+    assert r == RESP["GetOnlineList"]

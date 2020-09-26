@@ -27,7 +27,8 @@ class TendaAC15():
             'GetNetControl': self._URL_BASE+'/goform/GetNetControlList',
             'SetNetControl': self._URL_BASE+'/goform/SetNetControlList',
             'GetIpMacBind': self._URL_BASE+'/goform/GetIpMacBind',
-            'SetIpMacBind': self._URL_BASE+'/goform/SetIpMacBind'
+            'SetIpMacBind': self._URL_BASE+'/goform/SetIpMacBind',
+            'GetOnlineList': self._URL_BASE+'/goform/getOnlineList'
         }
 
     def _get_cookies(self):
@@ -89,7 +90,7 @@ class TendaAC15():
             mac:str: Client MAC address ex: "aa:bb:cc:dd:ee:ff"
         Returns:
             dict: {'enable': 1, 'mac': 'aa:bb:cc:dd:ee:ff', 'url_enable': 0, 'urls': '',
-            'time': '09:00-01:30', 'day': '1,1,1,1,1,1,1', 'limit_type': 1}
+                   'time': '09:00-01:30', 'day': '1,1,1,1,1,1,1', 'limit_type': 1}
         """
         return self._get_json(self._URLS['GetParentControl'] + mac)
 
@@ -109,7 +110,7 @@ class TendaAC15():
         Return a dictionary of Virtual Server configuration.
         Returns:
             dict: {'lanIp': '192.168.1.1', 'lanMask': '255.255.255.0',
-                'virtualList': [{'ip': '192.168.1.100', 'inPort': '80', 'outPort': '80', 'protocol': '0'}, ...]}
+                   'virtualList': [{'ip': '192.168.1.100', 'inPort': '80', 'outPort': '80', 'protocol': '0'}, ...]}
         """
         return self._get_json(self._URLS['GetVports'])
 
@@ -135,8 +136,8 @@ class TendaAC15():
         Return a list of Bandwidth configuration.
         Returns:
             list: [{'netControlEn': '1'}, {'upSpeed': '0', 'downSpeed': '0', 'devType': 'unknown',
-                'hostName': 'ClientName', 'ip': '192.168.1.100', 'mac': 'aa:bb:cc:dd:ee:ff', 'limitUp': '0',
-                'limitDown': '0', 'isControled': '0', 'offline': '0', 'isSet': '0'}, ...]
+                    'hostName': 'ClientName', 'ip': '192.168.1.100', 'mac': 'aa:bb:cc:dd:ee:ff', 'limitUp': '0',
+                    'limitDown': '0', 'isControled': '0', 'offline': '0', 'isSet': '0'}, ...]
         """
         return self._get_json(self._URLS['GetNetControl'])
 
@@ -161,7 +162,7 @@ class TendaAC15():
         Return a dictionary of DHCP Reservation configuration.
         Returns:
             dict: {'lanIp': '192.168.1.1', 'lanMask': '255.255.255.0', 'dhttpIP': '172.27.175.218', 'dhcpClientList': [], 
-                'bindList': [{'ipaddr': '192.168.1.100', 'macaddr': 'aa:bb:cc:dd:ee:ff', 'devname': 'ClientName', 'status': '1'}, ...]}
+                   'bindList': [{'ipaddr': '192.168.1.100', 'macaddr': 'aa:bb:cc:dd:ee:ff', 'devname': 'ClientName', 'status': '1'}, ...]}
         """
         return self._get_json(self._URLS['GetIpMacBind'])
 
@@ -195,9 +196,11 @@ class TendaAC15():
             return False
         return list(filter(iterator_func, mac_list["bindList"]))
 
-    def get_online_list(self, str_in_dev_name: str) -> list:
+    def get_online_list(self) -> list:
         """
-        Return a list of DHCP Reservation configuration filtered by 'devname' value if contains the str_in_dev_name param.
+        Return a list of online clients.
         Returns:
-            list: [{'ipaddr': '192.168.1.100', 'macaddr': 'aa:bb:cc:dd:ee:ff', 'devname': 'ClientName', 'status': '1'}, ...]}
+            list: [{"deviceId": "aa:bb:cc:dd:ee:ff", "ip": "192.168.1.100", "devName": "ClientName", "line": "2", "uploadSpeed": "0",
+                    "downloadSpeed": "0", "linkType": "unknown", "black": 0, "isGuestClient": "false" }, ...]}
         """
+        return self._get_json(self._URLS['GetOnlineList'])[1:]
