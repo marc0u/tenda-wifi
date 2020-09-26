@@ -204,3 +204,18 @@ class TendaAC15():
                     "downloadSpeed": "0", "linkType": "unknown", "black": 0, "isGuestClient": "false" }, ...]}
         """
         return self._get_json(self._URLS['GetOnlineList'])[1:]
+
+    def filter_onlinelist_by_devname(self, str_in_dev_name: str) -> list:
+        """
+        Return a list of online clients filtered by 'devname' value if contains the str_in_dev_name param.
+        Returns:
+            list: [{"deviceId": "aa:bb:cc:dd:ee:ff", "ip": "192.168.1.100", "devName": "ClientName", "line": "2", "uploadSpeed": "0",
+                    "downloadSpeed": "0", "linkType": "unknown", "black": 0, "isGuestClient": "false" }, ...]}
+        """
+        online_list = self.get_online_list()
+
+        def iterator_func(x):
+            if str_in_dev_name.lower() in x["devName"].lower():
+                return True
+            return False
+        return list(filter(iterator_func, online_list))

@@ -5,19 +5,25 @@ import sys
 # 'setup.py publish' shortcut.
 if sys.argv[-1] == 'publish':
     os.system('python setup.py sdist bdist_wheel')
-    os.system('twine upload dist/*')
+    os.system('python -m twine upload dist/*')
+    sys.exit()
+
+# 'setup.py publish' shortcut.
+if sys.argv[-1] == 'publishtest':
+    os.system('python setup.py sdist bdist_wheel')
+    os.system('python -m twine upload --repository testpypi dist/*')
     sys.exit()
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 requires = [
-    'reqtry==0.0.2'
+    'reqtry>=0.0.2,<1.0'
 ]
 
 setuptools.setup(
     name="tendawifi",
-    version="0.1.0",
+    version="0.2.0",
     author="Marco Urriola",
     author_email="marco.urriola@gmail.com",
     description="Python package that allows to manage tenda router AC15.",

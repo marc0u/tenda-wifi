@@ -16,14 +16,14 @@ If it run with default router ip "192.168.1.1":
 
 ```python
 >>> t = tendawifi.TendaAC15()
->>> Pass:
+>>> Password:
 ```
 
 If it run with custom router ip:
 
 ```python
 >>> t = tendawifi.TendaAC15(url_base="10.0.0.1")
->>> Pass:
+>>> Password:
 ```
 
 If it run without asking the password:
@@ -146,5 +146,29 @@ def filter_bindlist_by_devname(self, str_in_dev_name: str) -> list:
     Return a list of DHCP Reservation configuration filtered by 'devname' value if contains the str_in_dev_name param.
     Returns:
         list: [{'ipaddr': '192.168.1.100', 'macaddr': 'aa:bb:cc:dd:ee:ff', 'devname': 'ClientName', 'status': '1'}, ...]}
+    """
+```
+
+### Get online clients list
+
+```python
+def get_online_list(self) -> list:
+    """
+    Return a list of online clients.
+    Returns:
+        list: [{"deviceId": "aa:bb:cc:dd:ee:ff", "ip": "192.168.1.100", "devName": "ClientName", "line": "2", "uploadSpeed": "0",
+                "downloadSpeed": "0", "linkType": "unknown", "black": 0, "isGuestClient": "false" }, ...]}
+    """
+```
+
+### Filter online clients list by 'devName' value
+
+```python
+def filter_onlinelist_by_devname(self, str_in_dev_name: str) -> list:
+    """
+    Return a list of online clients filtered by 'devname' value if contains the str_in_dev_name param.
+    Returns:
+        list: [{"deviceId": "aa:bb:cc:dd:ee:ff", "ip": "192.168.1.100", "devName": "ClientName", "line": "2", "uploadSpeed": "0",
+                "downloadSpeed": "0", "linkType": "unknown", "black": 0, "isGuestClient": "false" }, ...]}
     """
 ```
