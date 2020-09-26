@@ -4,7 +4,8 @@ import hashlib
 import time
 import reqtry
 from threading import Timer
-
+from getpass import getpass
+from getpass import getpass
 logger = logging.getLogger(__name__)
 
 
@@ -14,7 +15,7 @@ class TendaAC15():
 
     def __init__(self, url_base='http://192.168.1.1', password=None):
         self._AUTH_DATA["password"] = hashlib.md5(
-            str.encode(input("Pass: "))).hexdigest() if not password else hashlib.md5(
+            str.encode(getpass())).hexdigest() if not password else hashlib.md5(
             str.encode(password)).hexdigest()
         self._URL_BASE = url_base
         self._URLS = {
@@ -193,3 +194,10 @@ class TendaAC15():
                 return True
             return False
         return list(filter(iterator_func, mac_list["bindList"]))
+
+    def get_online_list(self, str_in_dev_name: str) -> list:
+        """
+        Return a list of DHCP Reservation configuration filtered by 'devname' value if contains the str_in_dev_name param.
+        Returns:
+            list: [{'ipaddr': '192.168.1.100', 'macaddr': 'aa:bb:cc:dd:ee:ff', 'devname': 'ClientName', 'status': '1'}, ...]}
+        """
