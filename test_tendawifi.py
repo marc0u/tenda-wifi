@@ -14,7 +14,8 @@ URLS = {
     'SetNetControl': URL_BASE+'/goform/SetNetControlList',
     'GetIpMacBind': URL_BASE+'/goform/GetIpMacBind',
     'SetIpMacBind': URL_BASE+'/goform/SetIpMacBind',
-    'GetOnlineList': URL_BASE+'/goform/getOnlineList'
+    'GetOnlineList': URL_BASE+'/goform/getOnlineList',
+    'SysToolReboot': URL_BASE+'/goform/SysToolReboot'
 }
 
 RESP = {
@@ -47,9 +48,10 @@ class MockGetResponse:
 
 
 class MockPostResponse:
-    def __init__(self, has_cookies, status_code):
+    def __init__(self, has_cookies, status_code, text=None):
         self.cookies = has_cookies
         self.status_code = status_code
+        self.text = text
 
 
 @ pytest.fixture
@@ -71,6 +73,16 @@ def mock_response(monkeypatch):
 
     def mock_reqtry_post(*args, **kwargs):
         if args[0] == URLS["login"]:
+            return MockPostResponse(True, 302)
+        if args[0] == URLS["SetParentControl"] and kwargs["data"] == {'isControled': 0, 'mac': 'aa:bb:cc:dd:ee:ff'}:
+            return MockPostResponse(True, 200, '"errCode":0')
+        if args[0] == URLS["SetVports"] and kwargs["data"] == {'list': '192.168.1.100,80,80,0~192.168.1.100,80,80,0'}:
+            return MockPostResponse(True, 200, '"errCode":0')
+        if args[0] == URLS["SetNetControl"]:
+            return MockPostResponse(True, 200, '"errCode":0')
+        if args[0] == URLS["SetIpMacBind"]:
+            return MockPostResponse(True, 200, '"errCode":0')
+        if args[0] == URLS["SysToolReboot"]:
             return MockPostResponse(True, 302)
         return MockPostResponse(None, 404)
 
@@ -97,9 +109,19 @@ def test_get_parent_control(mock_response, tenda):
     assert r == RESP["GetParentControl"]
 
 
+def test_set_parent_control(mock_response, tenda):
+    r = tenda.set_parent_control('aa:bb:cc:dd:ee:ff', 0)
+    assert r == '"errCode":0'
+
+
 def test_get_vports(mock_response, tenda):
     r = tenda.get_vports()
     assert r == RESP["GetVports"]
+
+
+def test_set_vports(mock_response, tenda):
+    r = tenda.set_vports(tenda.get_vports())
+    assert r == '"errCode":0'
 
 
 def test_get_net_control(mock_response, tenda):
@@ -107,9 +129,19 @@ def test_get_net_control(mock_response, tenda):
     assert r == RESP["GetNetControl"]
 
 
+def test_set_net_control(mock_response, tenda):
+    r = tenda.set_net_control(tenda.get_net_control())
+    assert r == '"errCode":0'
+
+
 def test_get_ipmac_bind(mock_response, tenda):
     r = tenda.get_ipmac_bind()
     assert r == RESP["GetIpMacBind"]
+
+
+def test_set_imac_bind(mock_response, tenda):
+    r = tenda.set_ipmac_bind(tenda.get_ipmac_bind())
+    assert r == '"errCode":0'
 
 
 def test_filter_bindlist_by_devname(mock_response, tenda):
@@ -133,3 +165,7 @@ def test_filter_onlinelist_by_devname(mock_response, tenda):
     assert len(r) == 2
     for i in r:
         assert "clientname" in i["devName"].lower()
+
+
+def test_reboot(mock_response, tenda):
+    tenda.reboot()

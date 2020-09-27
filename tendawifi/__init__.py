@@ -28,7 +28,8 @@ class TendaAC15():
             'SetNetControl': self._URL_BASE+'/goform/SetNetControlList',
             'GetIpMacBind': self._URL_BASE+'/goform/GetIpMacBind',
             'SetIpMacBind': self._URL_BASE+'/goform/SetIpMacBind',
-            'GetOnlineList': self._URL_BASE+'/goform/getOnlineList'
+            'GetOnlineList': self._URL_BASE+'/goform/getOnlineList',
+            'SysToolReboot': self._URL_BASE+'/goform/SysToolReboot'
         }
 
     def _get_cookies(self):
@@ -219,3 +220,13 @@ class TendaAC15():
                 return True
             return False
         return list(filter(iterator_func, online_list))
+
+    def reboot(self):
+        """
+        Reboot the router
+        """
+        self._get_cookies()
+        assert self._cookies, "Reboot failed. It couldn't get the cookies."
+        r = reqtry.post(self._URLS['SysToolReboot'], cookies=self._cookies, data={'action': 0}, allow_redirects=False, timeout=(3, 3), tries=3, delay=1,
+                        backoff=1.5, jitter=(1, 1.5))
+        assert r.status_code == 302, f"Post request: Invalid http status code: {r.status_code}"
