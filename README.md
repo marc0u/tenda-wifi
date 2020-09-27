@@ -172,3 +172,12 @@ def filter_onlinelist_by_devname(self, str_in_dev_name: str) -> list:
                 "downloadSpeed": "0", "linkType": "unknown", "black": 0, "isGuestClient": "false" }, ...]}
     """
 ```
+
+### Reboot the router
+
+```python
+def reboot(self):
+        """
+        Reboot the router
+        """
+```
