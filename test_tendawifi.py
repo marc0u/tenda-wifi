@@ -88,7 +88,7 @@ def mock_response(monkeypatch):
             return MockPostResponse(True, 302)
         if args[0] == URLS["SetWPS"] and kwargs["data"] == {'wpsEn': 1}:
             return MockPostResponse(True, 200, '"errCode":0')
-        if args[0] == URLS["SetupWIFI"] and kwargs["data"] == {"wrlEn": 1, "wrlEn_5g": 1, "security": "wpawpa2psk", "security_5g": "wpawpa2psk", "ssid": "Mywifi", "ssid_5g": "Mywifi", "hideSsid": 0, "hideSsid_5g": 0, "wrlPwd": "12345678"}:
+        if args[0] == URLS["SetupWIFI"] and kwargs["data"] == {"wrlEn": 1, "wrlEn_5g": 1, "security": "wpawpa2psk", "security_5g": "wpawpa2psk", "ssid": "Mywifi", "ssid_5g": "Mywifi", "hideSsid": 0, "hideSsid_5g": 0, "wrlPwd": "12345678", "wrlPwd_5g": "12345678"}:
             return MockPostResponse(True, 200, '"errCode":0')
         return MockPostResponse(None, 404)
 

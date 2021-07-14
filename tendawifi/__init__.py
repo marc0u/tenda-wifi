@@ -253,4 +253,4 @@ class TendaAC15():
         Returns:
             str: Request response '{"errCode":0}'
         """
-        return self._req_post(self._URLS['SetupWIFI'], data={"wrlEn": 1, "wrlEn_5g": 1, "security": "wpawpa2psk", "security_5g": "wpawpa2psk", "ssid": ssid, "ssid_5g": ssid, "hideSsid": 0, "hideSsid_5g": 0, "wrlPwd": password})
+        return self._req_post(self._URLS['SetupWIFI'], data={"wrlEn": 1, "wrlEn_5g": 1, "security": "wpawpa2psk", "security_5g": "wpawpa2psk", "ssid": ssid, "ssid_5g": ssid, "hideSsid": 0, "hideSsid_5g": 0, "wrlPwd": password, "wrlPwd_5g": password})
