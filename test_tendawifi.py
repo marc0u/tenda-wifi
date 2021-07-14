@@ -15,7 +15,8 @@ URLS = {
     'GetIpMacBind': URL_BASE+'/goform/GetIpMacBind',
     'SetIpMacBind': URL_BASE+'/goform/SetIpMacBind',
     'GetOnlineList': URL_BASE+'/goform/getOnlineList',
-    'SysToolReboot': URL_BASE+'/goform/SysToolReboot'
+    'SysToolReboot': URL_BASE+'/goform/SysToolReboot',
+    'SetWPS': URL_BASE+'/goform/WifiWpsSet'
 }
 
 RESP = {
@@ -84,6 +85,8 @@ def mock_response(monkeypatch):
             return MockPostResponse(True, 200, '"errCode":0')
         if args[0] == URLS["SysToolReboot"]:
             return MockPostResponse(True, 302)
+        if args[0] == URLS["SetWPS"]:
+            return MockPostResponse(True, 200, '"errCode":0')
         return MockPostResponse(None, 404)
 
     monkeypatch.setattr(reqtry, "get", mock_reqtry_get)
@@ -169,3 +172,8 @@ def test_filter_onlinelist_by_devname(mock_response, tenda):
 
 def test_reboot(mock_response, tenda):
     tenda.reboot()
+
+
+def test_set_wps(mock_response, tenda):
+    r = tenda.set_wps_status(1)
+    assert r == '"errCode":0'

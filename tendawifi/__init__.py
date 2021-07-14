@@ -29,7 +29,8 @@ class TendaAC15():
             'GetIpMacBind': self._URL_BASE+'/goform/GetIpMacBind',
             'SetIpMacBind': self._URL_BASE+'/goform/SetIpMacBind',
             'GetOnlineList': self._URL_BASE+'/goform/getOnlineList',
-            'SysToolReboot': self._URL_BASE+'/goform/SysToolReboot'
+            'SysToolReboot': self._URL_BASE+'/goform/SysToolReboot',
+            'SetWPS': self._URL_BASE+'/goform/WifiWpsSet'
         }
 
     def _get_cookies(self):
@@ -230,3 +231,13 @@ class TendaAC15():
         r = reqtry.post(self._URLS['SysToolReboot'], cookies=self._cookies, data={'action': 0}, allow_redirects=False, timeout=(3, 3), tries=3, delay=1,
                         backoff=1.5, jitter=(1, 1.5))
         assert r.status_code == 302, f"Post request: Invalid http status code: {r.status_code}"
+
+    def set_wps_status(self, status: int) -> str:
+        """
+        Set status of WPS configuration.
+        Args:
+            status:int: 1 (enable) 0 (disable)
+        Returns:
+            str: Request response '{"errCode":0}'
+        """
+        return self._req_post(self._URLS['SetWPS'], data={'wpsEn': status})

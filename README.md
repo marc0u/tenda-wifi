@@ -177,7 +177,20 @@ def filter_onlinelist_by_devname(self, str_in_dev_name: str) -> list:
 
 ```python
 def reboot(self):
-        """
-        Reboot the router
-        """
+    """
+    Reboot the router
+    """
+```
+
+### Set WPS status
+
+```python
+def set_wps_status(self, status: int) -> str:
+    """
+    Set status of WPS configuration.
+    Args:
+        status:int: 1 (enable) 0 (disable)
+    Returns:
+        str: Request response '{"errCode":0}'
+    """
 ```
