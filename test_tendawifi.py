@@ -16,7 +16,8 @@ URLS = {
     'SetIpMacBind': URL_BASE+'/goform/SetIpMacBind',
     'GetOnlineList': URL_BASE+'/goform/getOnlineList',
     'SysToolReboot': URL_BASE+'/goform/SysToolReboot',
-    'SetWPS': URL_BASE+'/goform/WifiWpsSet'
+    'SetWPS': URL_BASE+'/goform/WifiWpsSet',
+    'SetupWIFI': URL_BASE+'/goform/WifiBasicSet'
 }
 
 RESP = {
@@ -85,7 +86,9 @@ def mock_response(monkeypatch):
             return MockPostResponse(True, 200, '"errCode":0')
         if args[0] == URLS["SysToolReboot"]:
             return MockPostResponse(True, 302)
-        if args[0] == URLS["SetWPS"]:
+        if args[0] == URLS["SetWPS"] and kwargs["data"] == {'wpsEn': 1}:
+            return MockPostResponse(True, 200, '"errCode":0')
+        if args[0] == URLS["SetupWIFI"] and kwargs["data"] == {"wrlEn": 1, "wrlEn_5g": 1, "security": "wpawpa2psk", "security_5g": "wpawpa2psk", "ssid": "Mywifi", "ssid_5g": "Mywifi", "hideSsid": 0, "hideSsid_5g": 0, "wrlPwd": "12345678"}:
             return MockPostResponse(True, 200, '"errCode":0')
         return MockPostResponse(None, 404)
 
@@ -176,4 +179,14 @@ def test_reboot(mock_response, tenda):
 
 def test_set_wps(mock_response, tenda):
     r = tenda.set_wps_status(1)
+    assert r == '"errCode":0'
+
+
+def test_set_wps(mock_response, tenda):
+    r = tenda.set_wps_status(1)
+    assert r == '"errCode":0'
+
+
+def test_setup_wifi(mock_response, tenda):
+    r = tenda.setup_wifi("Mywifi", "12345678")
     assert r == '"errCode":0'

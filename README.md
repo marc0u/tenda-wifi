@@ -194,3 +194,17 @@ def set_wps_status(self, status: int) -> str:
         str: Request response '{"errCode":0}'
     """
 ```
+
+### Setup WIFI
+
+```python
+def setup_wifi(self, ssid: str, password: str) -> str:
+    """
+    Set up WIFI configuration.
+    Args:
+        ssid:str: WIFI's name ex: "Mywifi"
+        password:str: WIFI's password ex: "12345678"
+    Returns:
+        str: Request response '{"errCode":0}'
+    """
+```
