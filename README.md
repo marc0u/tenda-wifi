@@ -208,3 +208,16 @@ def setup_wifi(self, ssid: str, password: str) -> str:
         str: Request response '{"errCode":0}'
     """
 ```
+
+### Set Scheduled Autoreboot status 
+
+```python
+def set_autoreboot_status(self, status: int) -> str:
+    """
+    Set status of Scheduled Autoreboot configuration.
+    Args:
+        status:int: 1 (enable) 0 (disable)
+    Returns:
+        str: Request response '{"errCode":0}'
+    """
+```

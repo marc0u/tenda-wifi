@@ -32,7 +32,7 @@ class TendaAC15():
             'SysToolReboot': self._URL_BASE+'/goform/SysToolReboot',
             'SetWPS': self._URL_BASE+'/goform/WifiWpsSet',
             'SetupWIFI': self._URL_BASE+'/goform/WifiBasicSet',
-
+            'SetAutoreboot': self._URL_BASE+'/goform/SetSysAutoRebbotCfg',
         }
 
     def _get_cookies(self):
@@ -254,3 +254,13 @@ class TendaAC15():
             str: Request response '{"errCode":0}'
         """
         return self._req_post(self._URLS['SetupWIFI'], data={"wrlEn": 1, "wrlEn_5g": 1, "security": "wpawpa2psk", "security_5g": "wpawpa2psk", "ssid": ssid, "ssid_5g": ssid, "hideSsid": 0, "hideSsid_5g": 0, "wrlPwd": password, "wrlPwd_5g": password})
+
+    def set_autoreboot_status(self, status: int) -> str:
+        """
+        Set status of Scheduled Autoreboot configuration.
+        Args:
+            status:int: 1 (enable) 0 (disable)
+        Returns:
+            str: Request response '{"errCode":0}'
+        """
+        return self._req_post(self._URLS['SetAutoreboot'], data={"autoRebootEn": status, "delayRebootEn": True, "rebootTime": "02: 00"})
