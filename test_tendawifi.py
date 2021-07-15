@@ -7,7 +7,7 @@ URL_BASE = 'http://localhost'
 URLS = {
     'login': URL_BASE+'/login/Auth',
     'GetParentControl': URL_BASE+'/goform/GetParentControlInfo?mac=',
-    'SetParentControl': URL_BASE+'/goform/parentControlEn',
+    'SetParentControl': URL_BASE+'/goform/saveParentControlInfo',
     'GetVports': URL_BASE+'/goform/GetVirtualServerCfg',
     'SetVports': URL_BASE+'/goform/SetVirtualServerCfg',
     'GetNetControl': URL_BASE+'/goform/GetNetControlList',
@@ -77,7 +77,7 @@ def mock_response(monkeypatch):
     def mock_reqtry_post(*args, **kwargs):
         if args[0] == URLS["login"]:
             return MockPostResponse(True, 302)
-        if args[0] == URLS["SetParentControl"] and kwargs["data"] == {'isControled': 0, 'mac': 'aa:bb:cc:dd:ee:ff'}:
+        if args[0] == URLS["SetParentControl"] and kwargs["data"] == {"deviceId": 'aa:bb:cc:dd:ee:ff', "enable": 1, "time": "06:00-06:05", "url_enable": 0, "urls": "", "day": "1,1,1,1,1,1,1", "limit_type": 0}:
             return MockPostResponse(True, 200, '"errCode":0')
         if args[0] == URLS["SetVports"] and kwargs["data"] == {'list': '192.168.1.100,80,80,0~192.168.1.100,80,80,0'}:
             return MockPostResponse(True, 200, '"errCode":0')
@@ -119,7 +119,7 @@ def test_get_parent_control(mock_response, tenda):
 
 
 def test_set_parent_control(mock_response, tenda):
-    r = tenda.set_parent_control('aa:bb:cc:dd:ee:ff', 0)
+    r = tenda.set_parent_control('aa:bb:cc:dd:ee:ff', 1)
     assert r == '"errCode":0'
 
 

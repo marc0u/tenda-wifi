@@ -21,7 +21,7 @@ class TendaAC15():
         self._URLS = {
             'login': self._URL_BASE+'/login/Auth',
             'GetParentControl': self._URL_BASE+'/goform/GetParentControlInfo?mac=',
-            'SetParentControl': self._URL_BASE+'/goform/parentControlEn',
+            'SetParentControl': self._URL_BASE+'/goform/saveParentControlInfo',
             'GetVports': self._URL_BASE+'/goform/GetVirtualServerCfg',
             'SetVports': self._URL_BASE+'/goform/SetVirtualServerCfg',
             'GetNetControl': self._URL_BASE+'/goform/GetNetControlList',
@@ -98,16 +98,19 @@ class TendaAC15():
         """
         return self._get_json(self._URLS['GetParentControl'] + mac)
 
-    def set_parent_control(self, mac: str, status: int) -> str:
+    def set_parent_control(self, mac: str, status: int, time: str = "06:00-06:05", days: str = "1,1,1,1,1,1,1", urls_blocked: str = "") -> str:
         """
         Set status of a Client Parent Control configuration.
         Args:
             mac:str: Client MAC address ex: "aa:bb:cc:dd:ee:ff"
             status:int: Status of client Parent Control ex: 1 (enable) 0 (disable) 
+            time:str: Time between is allowed. ex: "06:00-06:05"
+            days:str: Week days between is allowed. ex: "1,1,1,1,1,1,1"
+            urls_blocked:str: List of blocked urls. ex: "xvideos,pornhub"
         Returns:
             str: Request response '{"errCode":0}'
         """
-        return self._req_post(self._URLS['SetParentControl'], data={'mac': mac, 'isControled': status})
+        return self._req_post(self._URLS['SetParentControl'], data={"deviceId": mac, "enable": status, "time": time, "url_enable": 1 if urls_blocked else 0, "urls": urls_blocked, "day": days, "limit_type": 0})
 
     def get_vports(self) -> dict:
         """

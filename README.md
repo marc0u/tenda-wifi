@@ -51,12 +51,15 @@ def get_parent_control(self, mac: str) -> dict:
 ### Set Parent Control configuration MAC address
 
 ```python
-def set_parent_control(self, mac: str, status: int) -> str:
+def set_parent_control(self, mac: str, status: int, time: str = "06:00-06:05", days: str = "1,1,1,1,1,1,1", urls_blocked: str = "") -> str:
     """
     Set status of a Client Parent Control configuration.
     Args:
         mac:str: Client MAC address ex: "aa:bb:cc:dd:ee:ff"
-        status:int: Status of client Parent Control ex: 1 (enable) 0 (disable)
+        status:int: Status of client Parent Control ex: 1 (enable) 0 (disable) 
+        time:str: Time between is allowed. ex: "06:00-06:05"
+        days:str: Week days between is allowed. ex: "1,1,1,1,1,1,1"
+        urls_blocked:str: List of blocked urls. ex: "xvideos,pornhub"
     Returns:
         str: Request response '{"errCode":0}'
     """
