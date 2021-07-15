@@ -1,6 +1,7 @@
 import pytest
 import reqtry
 import tendawifi
+import hashlib
 
 
 URL_BASE = 'http://localhost'
@@ -19,6 +20,7 @@ URLS = {
     'SetWPS': URL_BASE+'/goform/WifiWpsSet',
     'SetupWIFI': URL_BASE+'/goform/WifiBasicSet',
     'SetAutoreboot': URL_BASE+'/goform/SetSysAutoRebbotCfg',
+    'SetSysPass': URL_BASE+'/goform/SysToolChangePwd',
 }
 
 RESP = {
@@ -51,10 +53,11 @@ class MockGetResponse:
 
 
 class MockPostResponse:
-    def __init__(self, has_cookies, status_code, text=None):
+    def __init__(self, has_cookies, status_code, text=None, headers=None):
         self.cookies = has_cookies
         self.status_code = status_code
         self.text = text
+        self.headers = headers
 
 
 @ pytest.fixture
@@ -93,6 +96,8 @@ def mock_response(monkeypatch):
             return MockPostResponse(True, 200, '"errCode":0')
         if args[0] == URLS["SetAutoreboot"] and kwargs["data"] == {"autoRebootEn": 1, "delayRebootEn": True, "rebootTime": "02: 00"}:
             return MockPostResponse(True, 200, '"errCode":0')
+        if args[0] == URLS["SetSysPass"] and kwargs["data"] == {"GO": "system_password.html", "SYSOPS": hashlib.md5(str.encode("1234")).hexdigest(), "SYSPS": hashlib.md5(str.encode("1234")).hexdigest(), "SYSPS2": hashlib.md5(str.encode("1234")).hexdigest()}:
+            return MockPostResponse(True, 302, headers={"Location": "login"})
         return MockPostResponse(None, 404)
 
     monkeypatch.setattr(reqtry, "get", mock_reqtry_get)
@@ -198,3 +203,7 @@ def test_setup_wifi(mock_response, tenda):
 def test_set_autoreboot(mock_response, tenda):
     r = tenda.set_autoreboot_status(1)
     assert r == '"errCode":0'
+
+
+def test_set_password(mock_response, tenda):
+    tenda.set_router_password("1234", "1234")

@@ -224,3 +224,15 @@ def set_autoreboot_status(self, status: int) -> str:
         str: Request response '{"errCode":0}'
     """
 ```
+
+### Set Router password 
+
+```python
+def set_router_password(self, old_pass: str, new_pass: str) -> str:
+    """
+    Set Router password.
+    Args:
+        old_pass:str: Old password.
+        new_pass:str: New password.
+    """
+```

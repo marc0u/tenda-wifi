@@ -1,10 +1,6 @@
-import json
 import logging
 import hashlib
-import time
 import reqtry
-from threading import Timer
-from getpass import getpass
 from getpass import getpass
 logger = logging.getLogger(__name__)
 
@@ -33,6 +29,7 @@ class TendaAC15():
             'SetWPS': self._URL_BASE+'/goform/WifiWpsSet',
             'SetupWIFI': self._URL_BASE+'/goform/WifiBasicSet',
             'SetAutoreboot': self._URL_BASE+'/goform/SetSysAutoRebbotCfg',
+            'SetSysPass': self._URL_BASE+'/goform/SysToolChangePwd',
         }
 
     def _get_cookies(self):
@@ -74,7 +71,7 @@ class TendaAC15():
         r = self._req_get(url)
         return r.json() if r else None
 
-    def _req_post(self, url: str, data):
+    def _req_post(self, url: str, data, raw_res: bool = False):
         """
         Return the POST request response in text format.
         """
@@ -83,6 +80,8 @@ class TendaAC15():
             return
         r = reqtry.post(url, cookies=self._cookies, data=data, allow_redirects=False, timeout=(3, 3), tries=3, delay=1,
                         backoff=1.5, jitter=(1, 1.5))
+        if raw_res:
+            return r
         assert r.status_code == 200, f"Post request: Invalid http status code: {r.status_code}"
         assert '"errCode":0' in r.text, f'Post response with error from server. Response: {r.text}'
         return r.text
@@ -267,3 +266,14 @@ class TendaAC15():
             str: Request response '{"errCode":0}'
         """
         return self._req_post(self._URLS['SetAutoreboot'], data={"autoRebootEn": status, "delayRebootEn": True, "rebootTime": "02: 00"})
+
+    def set_router_password(self, old_pass: str, new_pass: str) -> str:
+        """
+        Set Router password.
+        Args:
+            old_pass:str: Old password.
+            new_pass:str: New password.
+        """
+        r = self._req_post(self._URLS['SetSysPass'], data={"GO": "system_password.html", "SYSOPS": hashlib.md5(str.encode(old_pass)).hexdigest(
+        ), "SYSPS": hashlib.md5(str.encode(new_pass)).hexdigest(), "SYSPS2": hashlib.md5(str.encode(new_pass)).hexdigest()}, raw_res=True)
+        assert "login" in r.headers["Location"], "Incorrect Old Password"
