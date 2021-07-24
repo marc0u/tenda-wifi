@@ -167,9 +167,27 @@ def get_online_list(self) -> list:
 ### Filter online clients list by 'devName' value
 
 ```python
-def filter_onlinelist_by_devname(self, str_in_dev_name: str) -> list:
+def filter_onlinelist_by_devname(self, str_in_dev_name: str, case_sensitive=True) -> list:
     """
     Return a list of online clients filtered by 'devname' value if contains the str_in_dev_name param.
+    Args:
+        str_in_dev_name: String to find in devname. ex: "someone"
+        case_sensitive:bool: Whether to filter with case sensitive parameter.
+    Returns:
+        list: [{"deviceId": "aa:bb:cc:dd:ee:ff", "ip": "192.168.1.100", "devName": "ClientName", "line": "2", "uploadSpeed": "0",
+                "downloadSpeed": "0", "linkType": "unknown", "black": 0, "isGuestClient": "false" }, ...]}
+    """
+```
+
+### Filter online clients list by ip range
+
+```python
+def filter_onlinelist_by_iprange(self, ip_from: int, ip_to: int) -> list:
+    """
+    Return a list of online clients filtered by 'ip'.
+    Args:
+        ip_from:str: IP from ex: 100
+        ip_to:str: IP to ex: 250
     Returns:
         list: [{"deviceId": "aa:bb:cc:dd:ee:ff", "ip": "192.168.1.100", "devName": "ClientName", "line": "2", "uploadSpeed": "0",
                 "downloadSpeed": "0", "linkType": "unknown", "black": 0, "isGuestClient": "false" }, ...]}

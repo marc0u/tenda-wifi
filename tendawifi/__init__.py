@@ -1,6 +1,7 @@
 import logging
 import hashlib
 import reqtry
+import re
 from getpass import getpass
 logger = logging.getLogger(__name__)
 
@@ -211,9 +212,12 @@ class TendaAC15():
         """
         return self._get_json(self._URLS['GetOnlineList'])[1:]
 
-    def filter_onlinelist_by_devname(self, str_in_dev_name: str) -> list:
+    def filter_onlinelist_by_devname(self, str_in_dev_name: str, case_sensitive=True) -> list:
         """
         Return a list of online clients filtered by 'devname' value if contains the str_in_dev_name param.
+        Args:
+            str_in_dev_name: String to find in devname. ex: "someone"
+            case_sensitive:bool: Whether to filter with case sensitive parameter.
         Returns:
             list: [{"deviceId": "aa:bb:cc:dd:ee:ff", "ip": "192.168.1.100", "devName": "ClientName", "line": "2", "uploadSpeed": "0",
                     "downloadSpeed": "0", "linkType": "unknown", "black": 0, "isGuestClient": "false" }, ...]}
@@ -221,9 +225,31 @@ class TendaAC15():
         online_list = self.get_online_list()
 
         def iterator_func(x):
-            if str_in_dev_name.lower() in x["devName"].lower():
+            if case_sensitive and (str_in_dev_name in x["devName"]):
+                return True
+            if not case_sensitive and (str_in_dev_name.lower() in x["devName"].lower()):
                 return True
             return False
+        return list(filter(iterator_func, online_list))
+
+    def filter_onlinelist_by_iprange(self, ip_from: int, ip_to: int) -> list:
+        """
+        Return a list of online clients filtered by 'ip'.
+        Args:
+            ip_from:str: IP from ex: 100
+            ip_to:str: IP to ex: 250
+        Returns:
+            list: [{"deviceId": "aa:bb:cc:dd:ee:ff", "ip": "192.168.1.100", "devName": "ClientName", "line": "2", "uploadSpeed": "0",
+                    "downloadSpeed": "0", "linkType": "unknown", "black": 0, "isGuestClient": "false" }, ...]}
+        """
+        ip_from, ip_to = int(ip_from), int(ip_to)
+        assert ip_from < ip_to, 'Invalid: ip_from must be lower than ip_to. Ex. "ip_from:100, ip_to:150"'
+        online_list = self.get_online_list()
+
+        def iterator_func(online_list):
+            ip = re.match(
+                r"(\d{1,3}.\d{1,3}.\d{1,3}.)(\d{1,3})",  online_list["ip"])
+            return True if ip_from <= int(ip[2]) <= ip_to else False
         return list(filter(iterator_func, online_list))
 
     def reboot(self):
