@@ -23,7 +23,7 @@ requires = [
 
 setuptools.setup(
     name="tendawifi",
-    version="0.4.0",
+    version="0.5.0",
     author="Marco Urriola",
     author_email="marco.urriola@gmail.com",
     description="Python package that allows to manage tenda router AC15.",

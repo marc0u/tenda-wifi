@@ -31,6 +31,8 @@ class TendaAC15():
             'SetupWIFI': self._URL_BASE+'/goform/WifiBasicSet',
             'SetAutoreboot': self._URL_BASE+'/goform/SetSysAutoRebbotCfg',
             'SetSysPass': self._URL_BASE+'/goform/SysToolChangePwd',
+            'SetFastInternet': self._URL_BASE+'/goform/fast_setting_internet_set',
+            'SetFastRouter': self._URL_BASE+'/goform/fast_setting_wifi_set',
         }
 
     def _get_cookies(self):
@@ -303,3 +305,37 @@ class TendaAC15():
         r = self._req_post(self._URLS['SetSysPass'], data={"GO": "system_password.html", "SYSOPS": hashlib.md5(str.encode(old_pass)).hexdigest(
         ), "SYSPS": hashlib.md5(str.encode(new_pass)).hexdigest(), "SYSPS2": hashlib.md5(str.encode(new_pass)).hexdigest()}, raw_res=True)
         assert "login" in r.headers["Location"], "Incorrect Old Password"
+
+    def set_fast_internet(self, mac: str) -> str:
+        """
+        Set Fast Internet connection settings.
+        Args:
+            mac:str: Router MAC address.
+        Returns:
+            str: Request response '{"errCode":0}'
+        """
+        data = {
+            "netWanType": 0,
+            "cloneType": 0,
+            "mac": mac,
+        }
+        return self._req_post(self._URLS['SetFastInternet'], data=data)
+
+    def set_fast_router(self, ssid: str, wifi_pass: str, router_pass: str) -> str:
+        """
+        Set Fast Router settings.
+        Args:
+            ssid:str: WIFI's name ex: "Mywifi"
+            wifi_pass:str: WIFI's password ex: "12345678"
+            router_pass:str: Router's password ex: "12345678"
+        Returns:
+            str: Request response '{"errCode":0}'
+        """
+        data = {
+            "ssid": ssid,
+            "wrlPassword": wifi_pass,
+            "power": "high",
+            "timeZone": "-03:00",
+            "loginPwd": hashlib.md5(str.encode(router_pass)).hexdigest()
+        }
+        return self._req_post(self._URLS['SetFastRouter'], data=data)

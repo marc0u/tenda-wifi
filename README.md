@@ -254,3 +254,31 @@ def set_router_password(self, old_pass: str, new_pass: str) -> str:
         new_pass:str: New password.
     """
 ```
+
+### Set initial Internet settings 
+
+```python
+def set_fast_internet(self, mac: str) -> str:
+    """
+    Set Fast Internet connection settings.
+    Args:
+        mac:str: Router MAC address.
+    Returns:
+        str: Request response '{"errCode":0}'
+    """
+```
+
+### Set initial Router settings 
+
+```python
+def set_fast_router(self, ssid: str, wifi_pass: str, router_pass: str) -> str:
+    """
+    Set Fast Router settings.
+    Args:
+        ssid:str: WIFI's name ex: "Mywifi"
+        wifi_pass:str: WIFI's password ex: "12345678"
+        router_pass:str: Router's password ex: "12345678"
+    Returns:
+        str: Request response '{"errCode":0}'
+    """
+```
