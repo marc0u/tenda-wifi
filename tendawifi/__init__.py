@@ -33,6 +33,7 @@ class TendaAC15():
             'SetSysPass': self._URL_BASE+'/goform/SysToolChangePwd',
             'SetFastInternet': self._URL_BASE+'/goform/fast_setting_internet_set',
             'SetFastRouter': self._URL_BASE+'/goform/fast_setting_wifi_set',
+            'GetRouterStatus': self._URL_BASE+'/goform/GetRouterStatus'
         }
 
     def _get_cookies(self):
@@ -339,3 +340,11 @@ class TendaAC15():
             "loginPwd": hashlib.md5(str.encode(router_pass)).hexdigest()
         }
         return self._req_post(self._URLS['SetFastRouter'], data=data)
+
+    def get_router_status(self) -> list:
+        """
+        Return a dictionary with router information.
+        Returns:
+            list: {"wl5gEn":"1","wl5gName":"Lajudini","wl24gEn":"1","wl24gName":"Lajudini","lineup":"1|0|0|1","usbNum":"0","clientNum":19,"blackNum":0,"listNum":0,"deviceName":"AC15","lanIP":"192.168.1.1","lanMAC":"CC:2D:21:8F:E4:60","workMode":"router","apStatus":"1310007","wanInfo":[{"wanStatus":"1310007","wanIp":"192.168.0.100","wanUploadSpeed":"20.56","wanDownloadSpeed":"648.83"}],"onlineUpgradeInfo":{"newVersionExist":"0","newVersion":"","curVersion":"V15.03.05.20_multi"}}
+        """
+        return self._get_json(self._URLS['GetRouterStatus'])
